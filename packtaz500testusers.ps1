@@ -10,7 +10,7 @@ $password = Read-Host -AsSecureString "Input Password"
 
 New-ADUser -Name "Jack Robinson" -GivenName "Jack" -Surname "Robinson" -SamAccountName "jack" -UserPrincipalName "jack@az500lab.com" -Path "OU=Finance,OU=OrgUsers,DC=az500lab,DC=com" -AccountPassword $password -Enabled $true
 
-New-ADUser -Name "Kerri Ondrich" -GivenName "Kerri" -Surname "Ondrich" -SamAccountName "kerri" -UserPrincipalName "kerri@az500lab.com" -Path "OU=Finance,OU=OrgUsers,DC=az500lab,DC=com" -AccountPassword $password -Enabled $true
+New-ADUser -Name "Kerri Ondrich" -GivenName "Kerri" -Surname "Ondrich" -SamAccountName "kerri" -UserPrincipalName "kerri%%@az500lab.com" -Path "OU=Finance,OU=OrgUsers,DC=az500lab,DC=com" -AccountPassword $password -Enabled $true
 
 New-ADUser -Name "Lanie	Cominotti" -GivenName "Lanie" -Surname "Cominotti" -SamAccountName "lanie" -UserPrincipalName "lanie@az500lab.com" -Path "OU=Finance,OU=OrgUsers,DC=az500lab,DC=com" -AccountPassword $password -Enabled $true
 
