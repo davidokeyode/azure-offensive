@@ -22,7 +22,7 @@ az storage blob upload --account-name $name --container-name $container1 --name 
 
 
 ## App Service
-$gitrepo=https://github.com/Azure-Samples/php-docs-hello-world
+$gitrepo = "https://github.com/Azure-Samples/php-docs-hello-world"
 
 # Create a resource group.
 az group create --location $location --name $group
