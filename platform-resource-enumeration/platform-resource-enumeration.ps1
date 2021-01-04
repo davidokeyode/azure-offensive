@@ -2,7 +2,8 @@
 $group = "offensivesec-rg"
 $location = "uksouth"
 az group create --name $group --location $location
-$name = "spicycrabs"
+
+$name = Read-Host "Please enter a basename"
 $container1 = "private"
 $container2 = "public"
 $container3 = "archived"
