@@ -21,6 +21,25 @@ az storage blob upload-batch --account-name $name -d $container3 -s Windows-univ
 az storage blob upload-batch --account-name $name -d $container2 -s Windows-universal-samples/archived/CameraFaceDetection
 az storage blob upload --account-name $name --container-name $container1 --name sensitive_customer_private_information.csv --file sensitive_customer_private_information.csv 
 
+## Set variables and create resource group
+$random = Get-Random -Maximum 100000 -Minimum 10000
+$customappname = "customapp"
+$containerappname = "containerapp"
+
+az group create --name $group --location $location
+
+## obtain subscription id
+$subid=$(az account show --query id --output tsv)
+
+## create service principals with contributor permissions
+$customapp=$(az ad sp create-for-rbac -n $customappname --role Reader --scopes /subscriptions/$subid)
+$containerapp=$(az ad sp create-for-rbac -n $containerappname --role Reader --scopes /subscriptions/$subid)
+
+## Get the app id and user id
+$customappid=$(az ad app list --display-name $customappname --query [].appId -o tsv)
+$containerappid=$(echo $containerapp | jq -r .appId)
+$containerappsecret=$(echo $containerapp | jq -r .password)
+$tenantid=$(echo $containerapp | jq -r .tenant)
 
 ## App Service
 $gitrepo = "https://github.com/Azure-Samples/php-docs-hello-world"
@@ -40,8 +59,24 @@ az webapp deployment source config --name $name --resource-group $group --repo-u
 ## Key Vault
 az keyvault create --name $name --resource-group $group --location $location
 
-## Container Registry
-az acr create --resource-group $group --name $name --sku Basic
+## Container registry and import container images
+az acr create --resource-group $group --name $name --sku Standard
+az acr update --name $name --anonymous-pull-enabled
+az acr import -n $name --source docker.io/library/nginx:latest -t littlecloudnginx:v1
+az acr import -n $name --source docker.io/library/nginx:latest -t littlecloudnginx:v2
+az acr import -n $name --source docker.io/library/nginx:latest -t littlecloudnginx:v3
+az acr import -n $name --source docker.io/library/nginx:latest -t littlecloudnginx:v4
+az acr import -n $name --source docker.io/library/nginx:latest -t littlecloudnginx:v1
+az acr import -n $name --source docker.io/library/nginx:latest -t littlecloudnginx:v1
+
+Invoke-WebRequest -Uri https://raw.githubusercontent.com/PacktPublishing/Penetration-Testing-Azure-for-Ethical-Hackers/main/chapter-4/resources/Dockerfile -OutFile Dockerfile
+
+## Modify Docker file
+sed -i 's/"$containerappid"/"'"$containerappid"'"/' Dockerfile
+sed -i 's/"$containerappsecret"/"'"$containerappsecret"'"/' Dockerfile
+sed -i 's/"$tenantid"/"'"$tenantid"'"/' Dockerfile
+
+az acr build --resource-group $group --registry $acrname --image nodeapp-web:v1 .
 
 ## Function App
 az functionapp create -g $group  -p $name -n $name -s $name
