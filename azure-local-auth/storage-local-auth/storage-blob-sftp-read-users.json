@@ -1,0 +1,14 @@
+{
+    "Name": "Blob Storage SFTP Read Users",
+    "IsCustom": true,
+    "Description": "Blob Storage SFTP Read Users",
+    "Actions": [
+      "Microsoft.Storage/storageAccounts/localusers/read"
+    ],
+    "NotActions": [
+  
+    ],
+    "AssignableScopes": [
+      "/subscriptions/$subid"
+    ]
+  }

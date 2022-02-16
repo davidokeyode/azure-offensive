@@ -1,0 +1,14 @@
+{
+    "Name": "Storage Generate User Delegation Key",
+    "IsCustom": true,
+    "Description": "Storage Generate User Delegation Key",
+    "Actions": [
+      "Microsoft.Storage/storageAccounts/blobServices/generateUserDelegationKey/action"
+    ],
+    "NotActions": [
+  
+    ],
+    "AssignableScopes": [
+      "/subscriptions/$subid"
+    ]
+  }

@@ -1,0 +1,14 @@
+{
+    "Name": "Storage List Account SAS",
+    "IsCustom": true,
+    "Description": "Storage List Account SAS",
+    "Actions": [
+      "Microsoft.Storage/storageAccounts/listAccountSas/action"
+    ],
+    "NotActions": [
+  
+    ],
+    "AssignableScopes": [
+      "/subscriptions/$subid"
+    ]
+  }

@@ -1,0 +1,14 @@
+{
+    "Name": "Blob Storage SFTP List Keys",
+    "IsCustom": true,
+    "Description": "Blob Storage SFTP List Keys",
+    "Actions": [
+      "Microsoft.Storage/storageAccounts/localusers/listKeys/action"
+    ],
+    "NotActions": [
+  
+    ],
+    "AssignableScopes": [
+      "/subscriptions/$subid"
+    ]
+  }
