@@ -1,0 +1,14 @@
+{
+    "Name": "Storage List Keys",
+    "IsCustom": true,
+    "Description": "Storage List Keys",
+    "Actions": [
+      "Microsoft.Storage/storageAccounts/listkeys/action"
+    ],
+    "NotActions": [
+  
+    ],
+    "AssignableScopes": [
+      "/subscriptions/$subid"
+    ]
+  }
