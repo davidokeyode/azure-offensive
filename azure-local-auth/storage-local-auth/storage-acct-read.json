@@ -1,0 +1,14 @@
+{
+    "Name": "Storage Acct Read",
+    "IsCustom": true,
+    "Description": "Storage Acct Read",
+    "Actions": [
+      "Microsoft.Storage/storageAccounts/read"
+    ],
+    "NotActions": [
+  
+    ],
+    "AssignableScopes": [
+      "/subscriptions/$subid"
+    ]
+  }
