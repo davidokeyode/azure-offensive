@@ -1,7 +1,7 @@
 {
-    "Name": "Blob Storage SFTP Users Write",
+    "Name": "Blob Storage Exclude User Delegation Key",
     "IsCustom": true,
-    "Description": "Blob Storage SFTP Users Write",
+    "Description": "Blob Storage Exclude User Delegation Key",
     "Actions": [
       
     ],
