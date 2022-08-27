@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Update apt cache
+sudo apt-get update
+
 # Create configuration file for containerd:
 cat <<EOF | sudo tee /etc/modules-load.d/containerd.conf
 overlay
