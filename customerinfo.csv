@@ -1,0 +1,4 @@
+cognito:username,name,given_name,family_name,middle_name,nickname,preferred_username,profile,picture,website,email,email_verified,gender,birthdate,zoneinfo,locale,phone_number,phone_number_verified,address,updated_at,cognito:mfa_enabled
+Jorge,,Jorge,Turner,,,,,,,jorgeturner@cc.com,TRUE,,02/01/1995,,,+445464747472,TRUE,61 Oxford Street,,FALSE
+David,,David,Okeyode,,,,,,,davidokeyode@cc.com,TRUE,,01/01/1992,,,+449772364756,TRUE,24 Senegal Street,,FALSE
+Brenda,,Brenda,Tao,P,Tao,,,,,brenda@cc.com,TRUE,M,07/04/1996,,,+449748283737,TRUE,75 Sham Shui Po Road,,FALSE
