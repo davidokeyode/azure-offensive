@@ -9,6 +9,15 @@ choco install bot-framework-emulator --pre -y
 pip install flask requests python-dotenv pylint matplotlib pillow
 pip install --upgrade numpy
 
-mkdir $HOME\Downloads\ai-projects
-cd $HOME\Downloads\ai-projects
+code --install-extension ms-dotnettools.csharp --force
+code --install-extension ms-python.python --force
+code --install-extension ms-vscode.PowerShell --force
+code --install-extension ms-vscode.vscode-node-azure-pack --force
+code --install-extension ms-toolsai.jupyter --force
+code --install-extension ms-python.vscode-pylance --force
+code --install-extension donjayamanne.githistory --force
+code --install-extension eamodio.gitlens --force
+
+mkdir C:\Users\azureuser\ai-projects
+cd C:\Users\azureuser\ai-projects
 git clone https://github.com/davidokeyode/AI-102-AIEngineer.git
