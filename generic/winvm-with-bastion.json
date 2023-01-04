@@ -36,13 +36,6 @@
                 "description": "Location for all resources."
             }
         },
-        "dnsLabelPrefix": {
-            "type": "string",
-            "defaultValue": "[toLower(concat('simplewinvs-', uniqueString(resourceGroup().id)))]",
-            "metadata": {
-                "description": "Unique DNS Name for the Public IP used to access the Virtual Machine."
-            }
-        },
         "virtualNetworkName": {
             "type": "string",
             "defaultValue": "vNet",
@@ -79,9 +72,9 @@
         "vmSubnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), parameters('vmSubnetName'))]",
         "bastionSubnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), variables('bastionSubnetName'))]",
         "osDiskType": "StandardSSD_LRS",
-        "vmSubnetAddressPrefix": "10.1.0.0/24",
+        "vmSubnetAddressPrefix": "10.1.1.0/24",
         "bastionSubnetName": "AzureBastionSubnet",
-        "bastionSubnetAddressPrefix": "10.2.0.0/24",
+        "bastionSubnetAddressPrefix": "10.1.2.0/24",
         "addressPrefix": "10.1.0.0/16"
     },
     "resources": [
