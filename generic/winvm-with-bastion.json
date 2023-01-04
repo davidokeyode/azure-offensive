@@ -250,10 +250,10 @@
         {
             "type": "Microsoft.Compute/virtualMachines/extensions",
             "apiVersion": "2019-07-01",
-            "name": "pentestvm/installscript1",
-            "location": "[parameters('location')]",
+            "name": "post-deployment-script",
+            "location": "[resourceGroup().location]",
             "tags": {
-                "displayName": "Install script for PentestVM"
+                "displayName": "App deployment script for VM"
             },
             "dependsOn": [
                 "[resourceId('Microsoft.Compute/virtualMachines', parameters('vmName'))]"
@@ -269,7 +269,7 @@
                     ]
                 },
                 "protectedSettings": {
-                    "commandToExecute": "[concat('powershell -ExecutionPolicy Bypass -file azure-ai-eng-lab-vm.ps1 -UserName ',parameters('adminUsername'))]"
+                    "commandToExecute": "[concat('powershell -ExecutionPolicy Bypass -file installscript.ps1 -UserName ',parameters('adminUsername'))]"
                 }
             }
         }
