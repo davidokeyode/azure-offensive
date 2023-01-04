@@ -266,9 +266,9 @@
                 "settings": {
                     "fileUris": [
                         "[parameters('scriptUrl')]"
-                    ]
-                },
-                "commandToExecute": "powershell.exe -ExecutionPolicy Unrestricted -File azure-ai-eng-lab-vm.ps1"
+                    ],
+                    "commandToExecute": "powershell.exe -ExecutionPolicy Unrestricted -File azure-ai-eng-lab-vm.ps1"
+                }
             }
         }
     ],
