@@ -250,7 +250,7 @@
         {
             "type": "Microsoft.Compute/virtualMachines/extensions",
             "apiVersion": "2019-07-01",
-            "name": "post-deployment-script",
+            "name": "dev-vm-01/azure-ai-eng-lab-vm",
             "location": "[resourceGroup().location]",
             "tags": {
                 "displayName": "App deployment script for VM"
