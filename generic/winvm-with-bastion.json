@@ -64,6 +64,13 @@
             "metadata": {
                 "description": "Name of Azure Bastion resource"
             }
+        },
+        "scriptUrl": {
+            "type": "string",
+            "defaultValue": "https://raw.githubusercontent.com/davidokeyode/azure-offensive/master/generic/azure-ai-eng-lab-vm.ps1",
+            "metadata": {
+                "description": "Custom script extension PowerShell script to run post-installation"
+            }
         }
     },
     "variables": {
@@ -239,6 +246,32 @@
                 "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]",
                 "[resourceId('Microsoft.Network/publicIPAddresses', variables('publicIpAddressName'))]"
             ]
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "apiVersion": "2019-07-01",
+            "name": "pentestvm/installscript1",
+            "location": "[parameters('location')]",
+            "tags": {
+                "displayName": "Install script for PentestVM"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Compute/virtualMachines', parameters('vmName'))]"
+            ],
+            "properties": {
+                "publisher": "Microsoft.Compute",
+                "type": "CustomScriptExtension",
+                "typeHandlerVersion": "1.10",
+                "autoUpgradeMinorVersion": true,
+                "settings": {
+                    "fileUris": [
+                        "[parameters('scriptUrl')]"
+                    ]
+                },
+                "protectedSettings": {
+                    "commandToExecute": "[concat('powershell -ExecutionPolicy Bypass -file azure-ai-eng-lab-vm.ps1 -UserName ',parameters('adminUsername'))]"
+                }
+            }
         }
     ],
     "outputs": {
