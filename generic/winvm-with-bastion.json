@@ -261,16 +261,14 @@
             "properties": {
                 "publisher": "Microsoft.Compute",
                 "type": "CustomScriptExtension",
-                "typeHandlerVersion": "1.10",
+                "typeHandlerVersion": "1.4",
                 "autoUpgradeMinorVersion": true,
                 "settings": {
                     "fileUris": [
                         "[parameters('scriptUrl')]"
                     ]
                 },
-                "protectedSettings": {
-                    "commandToExecute": "[concat('powershell -ExecutionPolicy Bypass -file installscript.ps1 -UserName ',parameters('adminUsername'))]"
-                }
+                "commandToExecute": "powershell.exe -ExecutionPolicy Unrestricted -File azure-ai-eng-lab-vm.ps1"
             }
         }
     ],
