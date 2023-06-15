@@ -1,4 +1,4 @@
-Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
 
 choco install git vscode terraform httpie azure-cli az.powershell nodejs.install dotnet-6.0-sdk dotnet-sdk dotnetcore-sdk googlechrome setdefaultbrowser docker-desktop win-no-annoy -y
 choco install vcredist-all -y
