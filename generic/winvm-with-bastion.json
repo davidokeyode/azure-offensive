@@ -11,7 +11,7 @@
         },
         "VmSize": {
             "type": "string",
-            "defaultValue": "Standard_D4s_v3",
+            "defaultValue": "Standard_D4s_v5",
             "metadata": {
                 "description": "The size of the VM"
             }
@@ -198,9 +198,9 @@
                         }
                     },
                     "imageReference": {
-                        "publisher": "MicrosoftVisualStudio",
-                        "offer": "visualstudio2019latest",
-                        "sku": "vs-2019-comm-latest-ws2019",
+                        "publisher": "microsoftvisualstudio",
+                        "offer": "visualstudio2022",
+                        "sku": "vs-2022-comm-latest-ws2022",
                         "version": "latest"
                     }
                 },
