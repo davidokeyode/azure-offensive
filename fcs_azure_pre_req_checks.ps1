@@ -1,5 +1,12 @@
-# Suppress the output and warnings from Connect-AzAccount
-Connect-AzAccount -WarningAction SilentlyContinue | Out-Null
+# Connect to Azure (allowing output to help with login issues)
+Write-Host "Connecting to Azure..." -ForegroundColor Yellow
+$loginResult = Connect-AzAccount -WarningAction SilentlyContinue
+if ($loginResult) {
+    Write-Host "Successfully connected to Azure!" -ForegroundColor Green
+} else {
+    Write-Host "Failed to connect to Azure" -ForegroundColor Red
+    exit 1
+}
 
 # Get the current user context
 $currentUser = (Get-AzContext).Account.Id
@@ -101,8 +108,8 @@ $results | ForEach-Object {
 $globalAdminColor = if ($isGlobalAdmin) { "Green" } else { "Red" }
 Write-Host "Global Administrator Status: $($isGlobalAdmin)" -ForegroundColor $globalAdminColor
 
-# Now proceed with Premium0V3 quota checking
-Write-Host "`n=== Premium0V3 Quota Checking ===" -ForegroundColor Cyan
+# Now proceed with App Service Plan P0V3 quota checking
+Write-Host "`n=== App Service Plan P0V3 Quota Checking ===" -ForegroundColor Cyan
 
 # Show available subscriptions for reference
 Write-Host "`nAvailable Subscriptions:" -ForegroundColor Yellow
@@ -153,93 +160,108 @@ try {
         }
     }
     
-    Write-Host "`nChecking VM quota usage in region '$region'..." -ForegroundColor Yellow
+    Write-Host "`nChecking App Service Plan P0V3 quota usage in region '$region'..." -ForegroundColor Yellow
     
-    # Get VM usage/quota information for the specified region
-    $vmUsage = Get-AzVMUsage -Location $region -ErrorAction Stop
-    
-    # Filter for Premium0V3 instances
-    $premium0V3Usage = $vmUsage | Where-Object { 
-        $_.Name.Value -like "*Premium0V3*" -or 
-        $_.Name.LocalizedValue -like "*Premium0V3*" -or
-        $_.Name.Value -eq "standardPremium0V3Family" -or
-        $_.Name.LocalizedValue -like "*Standard Premium0V3*"
+    #region Premium P0v3 quota lookup --------------------------------------------
+    $quotaApiVersion = "2024-11-01"
+    $quotaUri = "/subscriptions/$subscriptionId/providers/Microsoft.Web/locations/$region/usages?api-version=$quotaApiVersion"
+    try {
+        Write-Host "Querying Azure Web quota API..." -ForegroundColor Yellow
+        $usageJson = Invoke-AzRestMethod -Method GET -Path $quotaUri -WarningAction SilentlyContinue
+        $usageData = ($usageJson.Content | ConvertFrom-Json).value
+        $p0v3 = $usageData |
+                Where-Object { $_.name.value -match '(?i)p0v3|premium0v3' } |
+                Select-Object -First 1
+        
+        if ($p0v3) {
+            $limit     = [int]$p0v3.limit
+            $inUse     = [int]$p0v3.currentValue
+            $available = $limit - $inUse
+            $quotaFound = $true
+        } else {
+            $quotaFound = $false
+        }
+        
+        # Also get general App Service Plan information for context
+        $existingAppServicePlans = Get-AzAppServicePlan | Where-Object { $_.Location -eq $region }
+        $appServiceQuotaInfo = @{
+            ExistingPlans = $existingAppServicePlans.Count
+            PremiumV3Plans = ($existingAppServicePlans | Where-Object { $_.Sku.Tier -like "*Premium*V3*" }).Count
+            P0V3Plans = ($existingAppServicePlans | Where-Object { $_.Sku.Name -eq "P0V3" }).Count
+        }
+        
+    } catch {
+        Write-Host "Failed to query quota information: $($_.Exception.Message)" -ForegroundColor Red
+        $quotaFound = $false
+        $appServiceQuotaInfo = $null
     }
+    #endregion
     
-    # Also check for general vCPU limits that might affect Premium0V3 deployments
-    $vcpuUsage = $vmUsage | Where-Object { 
-        $_.Name.Value -like "*cores*" -or 
-        $_.Name.LocalizedValue -like "*cores*" -or
-        $_.Name.LocalizedValue -like "*vCPUs*"
-    }
-    
-    Write-Host "`n=== Premium0V3 Quota Information ===" -ForegroundColor Cyan
+    Write-Host "`n=== App Service Plan P0V3 Quota Information ===" -ForegroundColor Cyan
     Write-Host "Subscription: $($subscription.Name)" -ForegroundColor White
     Write-Host "Region: $region" -ForegroundColor White
     Write-Host "Date: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')" -ForegroundColor White
     
-    if ($premium0V3Usage) {
-        Write-Host "`nPremium0V3 Specific Quotas:" -ForegroundColor Green
-        $premium0V3Usage | ForEach-Object {
-            $used = $_.CurrentValue
-            $limit = $_.Limit
-            $available = $limit - $used
-            $percentUsed = if ($limit -gt 0) { [math]::Round(($used / $limit) * 100, 1) } else { 0 }
-            
-            $color = switch ($percentUsed) {
-                { $_ -lt 50 } { "Green" }
-                { $_ -lt 80 } { "Yellow" }
-                default { "Red" }
-            }
-            
-            Write-Host "  $($_.Name.LocalizedValue):" -ForegroundColor White
-            Write-Host "    Used: $used / $limit ($percentUsed%)" -ForegroundColor $color
-            Write-Host "    Available: $available" -ForegroundColor $color
-        }
+    # P0V3 Quota Information from REST API
+    if ($quotaFound) {
+        Write-Host ""
+        Write-Host "----------- Premium P0v3 quota in $region -----------" -ForegroundColor Cyan
+        Write-Host "Limit     : $limit" -ForegroundColor White
+        Write-Host "In use    : $inUse" -ForegroundColor White
+        Write-Host "Available : $available" -ForegroundColor $(if ($available -gt 0) { "Green" } else { "Red" })
+        
+        $percentUsed = if ($limit -gt 0) { [math]::Round(($inUse / $limit) * 100, 1) } else { 0 }
+        Write-Host "Usage     : $percentUsed%" -ForegroundColor $(if ($percentUsed -lt 80) { "Green" } elseif ($percentUsed -lt 95) { "Yellow" } else { "Red" })
     } else {
-        Write-Host "`nNo Premium0V3 specific quotas found." -ForegroundColor Yellow
-        Write-Host "This could mean:" -ForegroundColor Yellow
-        Write-Host "  - Premium0V3 instances use general vCPU quotas" -ForegroundColor Yellow
-        Write-Host "  - The quota name format is different than expected" -ForegroundColor Yellow
+        Write-Host ""
+        Write-Host "No P0v3 quota entry found for $region." -ForegroundColor Yellow
+        Write-Host "This may mean P0v3 is available without specific limits in this region." -ForegroundColor Yellow
     }
     
-    Write-Host "`nGeneral vCPU/Core Quotas (may affect Premium0V3 deployments):" -ForegroundColor Green
-    $vcpuUsage | ForEach-Object {
-        $used = $_.CurrentValue
-        $limit = $_.Limit
-        $available = $limit - $used
-        $percentUsed = if ($limit -gt 0) { [math]::Round(($used / $limit) * 100, 1) } else { 0 }
+    # Additional App Service Plan context
+    if ($appServiceQuotaInfo) {
+        Write-Host ""
+        Write-Host "Current App Service Plans in $region`:" -ForegroundColor Green
+        Write-Host "  Total App Service Plans: $($appServiceQuotaInfo.ExistingPlans)" -ForegroundColor White
+        Write-Host "  Premium V3 Plans: $($appServiceQuotaInfo.PremiumV3Plans)" -ForegroundColor White
+        Write-Host "  P0V3 Plans specifically: $($appServiceQuotaInfo.P0V3Plans)" -ForegroundColor White
         
-        $color = switch ($percentUsed) {
-            { $_ -lt 50 } { "Green" }
-            { $_ -lt 80 } { "Yellow" }
-            default { "Red" }
+        if ($existingAppServicePlans) {
+            Write-Host ""
+            Write-Host "Existing plans:" -ForegroundColor White
+            $existingAppServicePlans | ForEach-Object {
+                $color = if ($_.Sku.Name -eq "P0V3") { "Yellow" } elseif ($_.Sku.Tier -like "*Premium*V3*") { "Cyan" } else { "White" }
+                Write-Host "  - $($_.Name): $($_.Sku.Name) ($($_.Sku.Tier))" -ForegroundColor $color
+            }
         }
-        
-        Write-Host "  $($_.Name.LocalizedValue):" -ForegroundColor White
-        Write-Host "    Used: $used / $limit ($percentUsed%)" -ForegroundColor $color
-        Write-Host "    Available: $available" -ForegroundColor $color
     }
+    
     
     # Summary
-    Write-Host "`n=== Quota Summary ===" -ForegroundColor Cyan
-    $totalVcpuUsage = $vcpuUsage | Where-Object { $_.Name.LocalizedValue -like "*Total Regional vCPUs*" } | Select-Object -First 1
-    if ($totalVcpuUsage) {
-        $available = $totalVcpuUsage.Limit - $totalVcpuUsage.CurrentValue
+    Write-Host "`n=== App Service Plan Quota Summary ===" -ForegroundColor Cyan
+    
+    if ($quotaFound) {
         if ($available -gt 0) {
-            Write-Host "✓ You have $available vCPUs available in $region" -ForegroundColor Green
+            Write-Host "[SUCCESS] You have $available P0V3 plans available in $region" -ForegroundColor Green
+            Write-Host "You can proceed with deploying your P0V3 hosting plan." -ForegroundColor Green
+        } elseif ($available -eq 0) {
+            Write-Host "[WARNING] P0V3 quota is at limit in $region ($inUse/$limit used)" -ForegroundColor Red
+            Write-Host "You may need to delete existing P0V3 plans or request quota increase." -ForegroundColor Red
         } else {
-            Write-Host "✗ No vCPUs available in $region. Current usage: $($totalVcpuUsage.CurrentValue)/$($totalVcpuUsage.Limit)" -ForegroundColor Red
+            Write-Host "[ERROR] P0V3 quota exceeded in $region" -ForegroundColor Red
         }
+    } else {
+        Write-Host "[INFO] P0V3 quota information not available" -ForegroundColor Yellow
+        Write-Host "This typically means P0V3 plans can be created without specific limits." -ForegroundColor Yellow
+        Write-Host "You can likely proceed with deployment." -ForegroundColor Green
     }
     
-    if ($premium0V3Usage) {
-        $availablePremium0V3 = ($premium0V3Usage | Measure-Object -Property { $_.Limit - $_.CurrentValue } -Sum).Sum
-        if ($availablePremium0V3 -gt 0) {
-            Write-Host "✓ Premium0V3 quota available" -ForegroundColor Green
-        } else {
-            Write-Host "✗ No Premium0V3 quota available" -ForegroundColor Red
-        }
+    if ($appServiceQuotaInfo) {
+        Write-Host ""
+        Write-Host "Additional context:" -ForegroundColor White
+        Write-Host "  Current P0V3 plans in region: $($appServiceQuotaInfo.P0V3Plans)" -ForegroundColor White
+        Write-Host "  Total PremiumV3 plans in region: $($appServiceQuotaInfo.PremiumV3Plans)" -ForegroundColor White
+        Write-Host "  Total App Service plans in region: $($appServiceQuotaInfo.ExistingPlans)" -ForegroundColor White
     }
 
     # Final comprehensive summary
@@ -253,9 +275,11 @@ try {
         Write-Host "Selected Subscription Owner Status: $($selectedSubscription.IsOwner)" -ForegroundColor $(if ($selectedSubscription.IsOwner) { "Green" } else { "Yellow" })
     }
     
-    if ($totalVcpuUsage) {
-        $quotaStatus = if (($totalVcpuUsage.Limit - $totalVcpuUsage.CurrentValue) -gt 0) { "Available" } else { "Exhausted" }
-        Write-Host "VM Quota Status in $region`: $quotaStatus" -ForegroundColor $(if ($quotaStatus -eq "Available") { "Green" } else { "Red" })
+    if ($quotaFound) {
+        $planStatus = if ($available -gt 0) { "Available ($available slots)" } else { "At Limit" }
+        Write-Host "P0V3 Plan Status in $region`: $planStatus" -ForegroundColor $(if ($available -gt 0) { "Green" } else { "Red" })
+    } else {
+        Write-Host "P0V3 Plan Status in $region`: Likely Available (no quota limit found)" -ForegroundColor Green
     }
 
 } catch {
@@ -270,5 +294,9 @@ try {
         if ($selectedSubscription -and -not $selectedSubscription.IsOwner) {
             Write-Host "Note: You are not an Owner of this subscription, which may limit quota visibility." -ForegroundColor Yellow
         }
+        Write-Host "`nFor App Service Plans (P0V3), you can still try to create one through:" -ForegroundColor Cyan
+        Write-Host "- Azure Portal > Create App Service Plan > Premium V3 tier" -ForegroundColor White
+        Write-Host "- Azure CLI: az appservice plan create --name myplan --resource-group rg --sku P0V3" -ForegroundColor White
+        Write-Host "- PowerShell: New-AzAppServicePlan -ResourceGroupName rg -Name myplan -Location $region -Tier PremiumV3 -WorkerSize Small" -ForegroundColor White
     }
 }
