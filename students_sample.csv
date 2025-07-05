@@ -1,0 +1,51 @@
+PartitionKey,RowKey,FirstName,LastName,Major,EnrollmentYear,GPA,LastReview,StudentAdvisor
+CS,S0001,Chidi,Benitez,Computer Science,2025,3.46,2025-07-05,Dr. Adebayo
+CS,S0002,Omar,Smith,Computer Science,2025,2.54,2025-07-05,Prof. Chen
+CS,S0003,Priya,Mbatha,Computer Science,2025,2.91,2025-07-05,Dr. González
+CS,S0004,Michael,Patil,Computer Science,2025,2.83,2025-07-05,Prof. Patel
+CS,S0005,Lucia,Ivanov,Computer Science,2025,3.6,2025-07-05,Dr. Nakamura
+CS,S0006,Ana,Hernandez,Computer Science,2025,3.52,2025-07-05,Prof. Hassan
+CS,S0007,Kenji,Okafor,Computer Science,2025,3.84,2025-07-05,Dr. Müller
+CS,S0008,Liam,Iyer,Computer Science,2025,2.63,2025-07-05,Prof. Rivera
+CS,S0009,Zainab,Nakamura,Computer Science,2025,3.13,2025-07-05,Dr. Adebayo
+CS,S0010,Fatima,Kim,Computer Science,2025,2.54,2025-07-05,Prof. Chen
+EE,S0011,Musa,Jama,Electrical Engineering,2024,2.83,2025-07-05,Dr. González
+EE,S0012,Yuri,O'Reilly,Electrical Engineering,2024,3.26,2025-07-05,Prof. Patel
+EE,S0013,Amina,Fernandes,Electrical Engineering,2024,2.54,2025-07-05,Dr. Nakamura
+EE,S0014,Elena,Silva,Electrical Engineering,2024,2.8,2025-07-05,Prof. Hassan
+EE,S0015,Victor,Nguyen,Electrical Engineering,2024,3.47,2025-07-05,Dr. Müller
+EE,S0016,Mei,Rossi,Electrical Engineering,2024,3.32,2025-07-05,Prof. Rivera
+EE,S0017,Raj,Johansson,Electrical Engineering,2024,2.83,2025-07-05,Dr. Adebayo
+EE,S0018,Santiago,Zhang,Electrical Engineering,2024,3.38,2025-07-05,Prof. Chen
+EE,S0019,Sofia,Ghosh,Electrical Engineering,2024,3.71,2025-07-05,Dr. González
+EE,S0020,Wei,Ahmed,Electrical Engineering,2024,2.51,2025-07-05,Prof. Patel
+ME,S0021,Chidi,Benitez,Mechanical Engineering,2023,3.71,2025-07-05,Dr. Nakamura
+ME,S0022,Omar,Smith,Mechanical Engineering,2023,3.55,2025-07-05,Prof. Hassan
+ME,S0023,Priya,Mbatha,Mechanical Engineering,2023,3.01,2025-07-05,Dr. Müller
+ME,S0024,Michael,Patil,Mechanical Engineering,2023,2.73,2025-07-05,Prof. Rivera
+ME,S0025,Lucia,Ivanov,Mechanical Engineering,2023,3.94,2025-07-05,Dr. Adebayo
+ME,S0026,Ana,Hernandez,Mechanical Engineering,2023,3.0,2025-07-05,Prof. Chen
+ME,S0027,Kenji,Okafor,Mechanical Engineering,2023,2.64,2025-07-05,Dr. González
+ME,S0028,Liam,Iyer,Mechanical Engineering,2023,2.65,2025-07-05,Prof. Patel
+ME,S0029,Zainab,Nakamura,Mechanical Engineering,2023,3.77,2025-07-05,Dr. Nakamura
+ME,S0030,Fatima,Kim,Mechanical Engineering,2023,3.41,2025-07-05,Prof. Hassan
+BIO,S0031,Musa,Jama,Biology,2026,3.71,2025-07-05,Dr. Müller
+BIO,S0032,Yuri,O'Reilly,Biology,2026,3.59,2025-07-05,Prof. Rivera
+BIO,S0033,Amina,Fernandes,Biology,2026,3.3,2025-07-05,Dr. Adebayo
+BIO,S0034,Elena,Silva,Biology,2026,3.96,2025-07-05,Prof. Chen
+BIO,S0035,Victor,Nguyen,Biology,2026,3.07,2025-07-05,Dr. González
+BIO,S0036,Mei,Rossi,Biology,2026,3.33,2025-07-05,Prof. Patel
+BIO,S0037,Raj,Johansson,Biology,2026,3.74,2025-07-05,Dr. Nakamura
+BIO,S0038,Santiago,Zhang,Biology,2026,3.43,2025-07-05,Prof. Hassan
+BIO,S0039,Sofia,Ghosh,Biology,2026,3.79,2025-07-05,Dr. Müller
+BIO,S0040,Wei,Ahmed,Biology,2026,3.37,2025-07-05,Prof. Rivera
+BUS,S0041,Chidi,Benitez,Business Administration,2025,3.56,2025-07-05,Dr. Adebayo
+BUS,S0042,Omar,Smith,Business Administration,2025,2.57,2025-07-05,Prof. Chen
+BUS,S0043,Priya,Mbatha,Business Administration,2025,2.84,2025-07-05,Dr. González
+BUS,S0044,Michael,Patil,Business Administration,2025,2.93,2025-07-05,Prof. Patel
+BUS,S0045,Lucia,Ivanov,Business Administration,2025,2.62,2025-07-05,Dr. Nakamura
+BUS,S0046,Ana,Hernandez,Business Administration,2025,2.85,2025-07-05,Prof. Hassan
+BUS,S0047,Kenji,Okafor,Business Administration,2025,2.65,2025-07-05,Dr. Müller
+BUS,S0048,Liam,Iyer,Business Administration,2025,2.92,2025-07-05,Prof. Rivera
+BUS,S0049,Zainab,Nakamura,Business Administration,2025,3.45,2025-07-05,Dr. Adebayo
+BUS,S0050,Fatima,Kim,Business Administration,2025,3.05,2025-07-05,Prof. Chen
